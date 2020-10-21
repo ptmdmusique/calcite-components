@@ -62,6 +62,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  @apply text-0;
   padding: $baseline/4 1rem;
   text-decoration: none;
   width: 100%;

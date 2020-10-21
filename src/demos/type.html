@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Type Sizes</title>
+    <link rel="stylesheet" href="https://webapps-cdn.esri.com/CDN/fonts/v1.4.1/fonts.css" />
+    <link rel="stylesheet" href="../build/calcite.css" />
+    <script type="module" src="../build/calcite.esm.js"></script>
+    <script nomodule src="../build/calcite.js"></script>
+  </head>
+  <style>
+    .block {
+      width: 320px;
+      margin-right: 16px;
+      display: block;
+      float: left;
+    }
+    .block-wide {
+      width: 656px;
+    }
+    .boxes-on .bg {
+      background: rgba(0, 0, 255, 0.125);
+    }
+    .grid-on .grid {
+      opacity: .35;
+    }
+    html {
+      position: relative;
+    }
+    body,
+    html {
+      margin: 0;
+      padding: 0;
+    }
+    .grid {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      height: 100%;
+      z-index: 200;
+      background-image: url(../assets/demo/grid.svg);
+      background-repeat: repeat;
+      background-position: top left;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .clearfix:after {
+      display: table;
+      content: "";
+      clear: both;
+    }
+    .space-y-0 {
+      margin-top: 0;
+    }
+    .space-x-0 {
+      margin-left: 0;
+    }
+    .space-y-1 {
+      margin-top: 0.25rem;
+    }
+    .space-x-1 {
+      margin-left: 0.25rem;
+    }
+    .space-y-2 {
+      margin-top: 0.5rem;
+    }
+    .space-x-2 {
+      margin-left: 0.5rem;
+    }
+    .space-y-3 {
+      margin-top: 0.75rem;
+    }
+    .space-x-3 {
+      margin-left: 0.75rem;
+    }
+    .space-y-4 {
+      margin-top: 1rem;
+    }
+    .space-x-4 {
+      margin-left: 1rem;
+    }
+    .space-y-5 {
+      margin-top: 1.25rem;
+    }
+    .space-x-5 {
+      margin-left: 1.25rem;
+    }
+    .space-y-6 {
+      margin-top: 1.5rem;
+    }
+    .space-x-6 {
+      margin-left: 1.5rem;
+    }
+    .space-y-8 {
+      margin-top: 2rem;
+    }
+    .space-x-8 {
+      margin-left: 2rem;
+    }
+    .space-y-10 {
+      margin-top: 2.5rem;
+    }
+    .space-x-10 {
+      margin-left: 2.5rem;
+    }
+    .text--3 {
+      font-size: 0.625rem; /* 10 / 12 (1.2) */
+      line-height: 0.75rem;
+    }
+    .text--2 {
+      font-size: 0.75rem; /* 12 / 16 (1.333) */
+      line-height: 1rem;
+    }
+    .text--1 {
+      font-size: 0.875rem; /* 14 / 16 (1.14) */
+      line-height: 1rem;
+    }
+    .text-0 {
+      font-size: 1rem; /* 16/20 (1.25) */
+      line-height: 1.25rem;
+    }
+    .text-1 {
+      font-size: 1.125rem; /* 18 / 24 (1.3333) */
+      line-height: 1.5rem;
+    }
+    .text-2 {
+      font-size: 1.25rem; /* 20 / 28 (1.4) */
+      line-height: 1.75rem;
+    }
+    .text-3 {
+      font-size: 1.625rem; /* 26 / 32 (1.23) */
+      line-height: 2rem;
+    }
+    .text-4 {
+      font-size: 2rem; /* 32 / 40 (1.25) */
+      line-height: 2.5rem;
+    }
+    .text-5 {
+      font-size: 2.5rem; /* 40 / 48 (1.2) */
+      line-height: 3rem;
+    }
+    .text-6 {
+      font-size: 3rem; /* 48 / 56 (1.1666) */
+      line-height: 3.75rem;
+    }
+    .text-7 {
+      font-size: 3.5rem; /* 56 / 64 (1.14) */
+      line-height: 4rem;
+    }
+    .text-8 {
+      font-size: 4rem; /* 64 / 72 (1.125) */
+      line-height: 4.5rem;
+    }
+  </style>
+  <body class="space-y-4 space-x-4 grid-on boxes-on">
+    <div class="grid"></div>
+    <div class="clearfix">
+      <div class="block bg">
+        <calcite-button icon-start="apps" width="full">Button</calcite-button>
+      </div>
+      <div class="block bg">
+        <calcite-input value="testing"></calcite-input>
+      </div>
+      <div class="block bg">
+        <calcite-tab-nav>
+          <calcite-tab-title active>TAB 1</calcite-tab-title>
+          <calcite-tab-title active>TAB 2</calcite-tab-title>
+          <calcite-tab-title active>TAB 3</calcite-tab-title>
+        </calcite-tab-nav>
+      </div>
+      <div class="block">
+        <div class="bg">
+          <calcite-switch id="grid" switched></calcite-switch><label for="grid" class="space-x-2">Grid</label>
+        </div>
+        <div class="space-y-1 bg">
+          <calcite-switch id="boxes" switched></calcite-switch><label for="boxes" class="space-x-2">Boxes</label>
+        </div>
+      </div>
+    </div>
+    <div class="clearfix">
+      <div class="block space-y-1">
+        <div class="text-5 bg">Simulating title.</div>
+        <div class="text-3 bg space-y-1">Below, place a subtitle which wraps lines and demonstrates line height.</div>
+        <div class="text-0 bg space-y-5">Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century who is thought to have scrambled parts of Cicero's De Finibus Bonorum et Malorum for use in a type specimen book.</div>
+      </div>
+
+      <div class="block space-y-1">
+        <div class="text-2 bg">text 2</div>
+        <div class="text--1 bg">Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century who is thought to have scrambled parts of Cicero's De Finibus Bonorum et Malorum for use in a type specimen book.</div>
+        <div class="text--2 space-y-2 bg">Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century who is thought to have scrambled parts of Cicero's De Finibus Bonorum et Malorum for use in a type specimen book.</div>
+      </div>
+
+      <div class="block">
+        <div class="text-1 bg space-y-1">text 1</div>
+        <div class="text--1 bg">Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century who is thought to have scrambled parts of Cicero's De Finibus Bonorum et Malorum for use in a type specimen book.</div>
+        <div class="text--3 space-y-2 bg">Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century who is thought to have scrambled parts of Cicero's De Finibus Bonorum et Malorum for use in a type specimen book.</div>
+        <div class="text--3 space-y-2 bg">Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century who is thought to have scrambled parts of Cicero's De Finibus Bonorum et Malorum for use in a type specimen book.</div>
+      </div>
+    </div>
+
+    <div class="space-y-5 clearfix">
+      <div class="block block-wide">
+        <div class="text-8 bg">8. Lorem ipsum, frequently known as hamburgersdiv.</div>
+        <div class="text-7 bg space-y-4">7. Amazingly few discotheques provide jukeboxes.</div>
+        <div class="text-6 bg space-y-4">6. Dummy text used in laying out print, graphic or web designs.</div>
+      </div>
+
+      <div class="block block-wide">
+        <div class="text-5 bg">5. Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs.</div>
+        <div class="text-4 space-y-4 bg">4. The passage is attributed to an unknown typesetter in the 15th century who is thought to have scrambled parts of Cicero's De Finibus Bonorum et Malorum for use in a type specimen book.</div>
+        <div class="text-3 space-y-4 bg">3. Amazingly few discotheques provide jukeboxes, graphic or web designs. Indeed, this is the text we'll use to set the type on this page.</div>
+        <div class="text-2 space-y-4 bg">2. Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century who is thought to have scrambled parts of Cicero's De Finibus Bonorum et Malorum for use in a type specimen book.</div>
+      </div>
+    </div>
+
+    <div class="space-y-5 clearfix">
+      <div class="block">
+        <div class="text-1 bg">1. Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century who is thought to have scrambled parts of Cicero's De Finibus Bonorum et Malorum for use in a type specimen book.</div>
+      </div>
+
+      <div class="block">
+        <div class="text-0 bg">0. Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century who is thought to have scrambled parts of Cicero's De Finibus Bonorum et Malorum for use in a type specimen book.</div>
+      </div>
+
+      <div class="block">
+        <div class="text--1 bg">-1. Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century who is thought to have scrambled parts of Cicero's De Finibus Bonorum et Malorum for use in a type specimen book.</div>
+      </div>
+
+      <div class="block">
+        <div class="text--2 bg">-2. Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century who is thought to have scrambled parts of Cicero's De Finibus Bonorum et Malorum for use in a type specimen book.</div>
+        <div class="text--3 space-y-4 bg">-3. Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century who is thought to have scrambled parts of Cicero's De Finibus Bonorum et Malorum for use in a type specimen book.</div>
+      </div>
+    </div>
+
+    <script>
+      document.querySelector("#grid").addEventListener("calciteSwitchChange", function (e) {
+        document.body.classList[e.detail.switched ? "add" : "remove"]("grid-on")
+      })
+      document.querySelector("#boxes").addEventListener("calciteSwitchChange", function (e) {
+        document.body.classList[e.detail.switched ? "add" : "remove"]("boxes-on")
+      })
+    </script>
+  </body>
+</html>

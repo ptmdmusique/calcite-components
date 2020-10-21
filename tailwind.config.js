@@ -1,4 +1,18 @@
+const plugin = require('tailwindcss/plugin');
+
 module.exports = {
+  // implement font-scale as a pairing of size/line-height
+  plugins: [
+    plugin(({ addComponents }) => {
+      const fontSizes = {
+        '.text-0': {
+          fontSize: '1rem',
+          lineHeight: '1.5'
+        }
+      };
+      addComponents(fontSizes)
+    })
+  ],
   theme: {
     borderRadius: {
       none: '0',
