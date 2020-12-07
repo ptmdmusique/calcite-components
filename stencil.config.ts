@@ -3,7 +3,91 @@ import { postcss } from "@stencil/postcss";
 import { sass } from "@stencil/sass";
 import autoprefixer from "autoprefixer";
 import tailwind from "tailwindcss";
+import { angularOutputTarget, ValueAccessorConfig } from "@stencil/angular-output-target";
+import { reactOutputTarget } from "@stencil/react-output-target";
+import { vueOutputTarget, ComponentModelConfig } from "@stencil/vue-output-target";
+// import { svelteOutputTarget, ComponentBindingConfig } from "@stencil/svelte-output-target";
 import { generatePreactTypes } from "./support/preact";
+
+const angularValueAccessorBindings: ValueAccessorConfig[] = [
+  // {
+  //   elementSelectors: ['my-input[type=text]'],
+  //   event: 'myChange',
+  //   targetAttr: 'value',
+  //   type: 'text',
+  // },
+  // {
+  //   elementSelectors: ['my-input[type=number]'],
+  //   event: 'myChange',
+  //   targetAttr: 'value',
+  //   type: 'number',
+  // },
+  // {
+  //   elementSelectors: ['my-checkbox'],
+  //   event: 'myChange',
+  //   targetAttr: 'checked',
+  //   type: 'boolean',
+  // },
+  // {
+  //   elementSelectors: ['my-radio'],
+  //   event: 'mySelect',
+  //   targetAttr: 'checked',
+  //   type: 'radio',
+  // },
+  // {
+  //   elementSelectors: ['my-range', 'my-radio-group'],
+  //   event: 'myChange',
+  //   targetAttr: 'value',
+  //   type: 'select',
+  // },
+];
+
+const vueComponentModels: ComponentModelConfig[] = [
+  // {
+  //   elements: ['my-input', 'my-range'],
+  //   event: 'myChange',
+  //   targetAttr: 'value',
+  // },
+  // {
+  //   elements: ['my-checkbox'],
+  //   event: 'myChange',
+  //   targetAttr: 'checked',
+  // },
+  // {
+  //   elements: ['my-radio'],
+  //   event: 'mySelect',
+  //   targetAttr: 'checked',
+  // },
+  // {
+  //   elements: ['my-range', 'my-radio-group'],
+  //   event: 'myChange',
+  //   targetAttr: 'value',
+  // },
+];
+
+// const svelteComponentBindings: ComponentBindingConfig[] = [
+  // {
+  //   elements: ['my-input', 'my-range'],
+  //   event: 'myChange',
+  //   targetProp: 'value',
+  // },
+  // {
+  //   elements: ['my-checkbox'],
+  //   event: 'myChange',
+  //   targetProp: 'checked',
+  // },
+  // {
+  //   elements: ['my-radio'],
+  //   event: 'mySelect',
+  //   targetProp: 'checked',
+  // },
+  // {
+  //   elements: ['my-range', 'my-radio-group'],
+  //   event: 'myChange',
+  //   targetProp: 'value',
+  // },
+// ];
+
 
 export const create: () => Config = () => ({
   buildEs5: "prod",
@@ -69,6 +153,26 @@ export const create: () => Config = () => ({
     { type: "dist" },
     { type: "docs-readme" },
     { type: "custom", name: "preact", generator: generatePreactTypes },
+    angularOutputTarget({
+      componentCorePackage: "@esri/calcite-components",
+      directivesProxyFile: "./frameworks/angular/src/directives/proxies.ts",
+      valueAccessorConfigs: angularValueAccessorBindings,
+    }),
+    reactOutputTarget({
+      componentCorePackage: "@esri/calcite-components",
+      proxiesFile: "./frameworks/react/src/components.ts",
+    }),
+    vueOutputTarget({
+      componentCorePackage: "@esri/calcite-components",
+      proxiesFile: "./frameworks/vue/src/proxies.ts",
+      componentModels: vueComponentModels,
+    }),
+    // svelteOutputTarget({
+    //   accessors: true,
+    //   componentCorePackage: "@esri/calcite-components",
+    //   proxiesFile: "../calcite-components-svelte/src/proxies.ts",
+    //   componentBindings: svelteComponentBindings,
+    // }),
     {
       type: "www",
       baseUrl: "https://stenciljs.com/",
