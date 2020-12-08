@@ -3,13 +3,13 @@ import { postcss } from "@stencil/postcss";
 import { sass } from "@stencil/sass";
 import autoprefixer from "autoprefixer";
 import tailwind from "tailwindcss";
-import { angularOutputTarget, ValueAccessorConfig } from "@stencil/angular-output-target";
+// import { angularOutputTarget, ValueAccessorConfig } from "@stencil/angular-output-target";
 import { reactOutputTarget } from "@stencil/react-output-target";
-import { vueOutputTarget, ComponentModelConfig } from "@stencil/vue-output-target";
+// import { vueOutputTarget, ComponentModelConfig } from "@stencil/vue-output-target";
 // import { svelteOutputTarget, ComponentBindingConfig } from "@stencil/svelte-output-target";
 import { generatePreactTypes } from "./support/preact";
 
-const angularValueAccessorBindings: ValueAccessorConfig[] = [
+// const angularValueAccessorBindings: ValueAccessorConfig[] = [
   // {
   //   elementSelectors: ['my-input[type=text]'],
   //   event: 'myChange',
@@ -40,9 +40,9 @@ const angularValueAccessorBindings: ValueAccessorConfig[] = [
   //   targetAttr: 'value',
   //   type: 'select',
   // },
-];
+// ];
 
-const vueComponentModels: ComponentModelConfig[] = [
+// const vueComponentModels: ComponentModelConfig[] = [
   // {
   //   elements: ['my-input', 'my-range'],
   //   event: 'myChange',
@@ -63,7 +63,7 @@ const vueComponentModels: ComponentModelConfig[] = [
   //   event: 'myChange',
   //   targetAttr: 'value',
   // },
-];
+// ];
 
 // const svelteComponentBindings: ComponentBindingConfig[] = [
   // {
@@ -153,20 +153,20 @@ export const create: () => Config = () => ({
     { type: "dist" },
     { type: "docs-readme" },
     { type: "custom", name: "preact", generator: generatePreactTypes },
-    angularOutputTarget({
-      componentCorePackage: "@esri/calcite-components",
-      directivesProxyFile: "./frameworks/angular/src/directives/proxies.ts",
-      valueAccessorConfigs: angularValueAccessorBindings,
-    }),
+    // angularOutputTarget({
+    //   componentCorePackage: "@esri/calcite-components",
+    //   directivesProxyFile: "./frameworks/angular/src/directives/proxies.ts",
+    //   valueAccessorConfigs: angularValueAccessorBindings,
+    // }),
     reactOutputTarget({
       componentCorePackage: "@esri/calcite-components",
       proxiesFile: "./frameworks/react/src/components.ts",
     }),
-    vueOutputTarget({
-      componentCorePackage: "@esri/calcite-components",
-      proxiesFile: "./frameworks/vue/src/proxies.ts",
-      componentModels: vueComponentModels,
-    }),
+    // vueOutputTarget({
+    //   componentCorePackage: "@esri/calcite-components",
+    //   proxiesFile: "./frameworks/vue/src/proxies.ts",
+    //   componentModels: vueComponentModels,
+    // }),
     // svelteOutputTarget({
     //   accessors: true,
     //   componentCorePackage: "@esri/calcite-components",

@@ -66,6 +66,7 @@
     "@stencil/core": "2.3.0",
     "@stencil/eslint-plugin": "0.3.1",
     "@stencil/postcss": "1.0.1",
+    "@stencil/react-output-target": "0.0.9",
     "@stencil/sass": "1.4.1",
     "@stencil/state-tunnel": "^1.0.1",
     "@storybook/addon-a11y": "6.1.9",
