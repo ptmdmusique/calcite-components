@@ -17,8 +17,11 @@
     "removeComments": false,
     "sourceMap": true,
     "jsx": "react",
-    "target": "es2015"
+    "target": "es2015",
+    "skipLibCheck": true
   },
+  "rootDirs": ["./node_modules"],
+  "typeRoots" : ["./node_modules/@types"],
   "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["./__tests__/**", "node_modules", "setupTests.ts"],
   "compileOnSave": false,

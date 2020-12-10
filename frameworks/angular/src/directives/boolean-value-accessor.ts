@@ -1,13 +1,13 @@
-import { Directive, ElementRef } from '@angular/core';
-import { NG_VALUE_ACCESSOR } from '@angular/forms';
+import { Directive, ElementRef, Injectable } from "@angular/core";
+import { NG_VALUE_ACCESSOR } from "@angular/forms";
 
-import { ValueAccessor } from './value-accessor';
+import { ValueAccessor } from "./value-accessor";
 
 @Directive({
   /* tslint:disable-next-line:directive-selector */
-  selector: 'my-checkbox',
+  selector: "calcite-checkbox",
   host: {
-    '(myChange)': 'handleChangeEvent($event.target.checked)'
+    "(calciteCheckboxChange)": "handleChangeEvent($event.target.checked)"
   },
   providers: [
     {

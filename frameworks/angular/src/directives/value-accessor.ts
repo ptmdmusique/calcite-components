@@ -1,7 +1,7 @@
-import { ElementRef, HostListener } from '@angular/core';
+import { ElementRef, HostListener, Injectable } from '@angular/core';
 import { ControlValueAccessor } from '@angular/forms';
 
-export class ValueAccessor implements ControlValueAccessor {
+@Injectable() export class ValueAccessor implements ControlValueAccessor {
 
   private onChange: (value: any) => void = () => {/**/};
   private onTouched: () => void = () => {/**/};

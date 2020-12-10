@@ -5,9 +5,9 @@ import { ValueAccessor } from './value-accessor';
 
 @Directive({
   /* tslint:disable-next-line:directive-selector */
-  selector: 'my-radio',
+  selector: 'calcite-radio-group-item',
   host: {
-    '(mySelect)': 'handleChangeEvent($event.target.checked)'
+    '(calciteRadioGroupItemChange)': 'handleChangeEvent($event.target.checked)'
   },
   providers: [
     {

@@ -3,45 +3,13 @@ import { postcss } from "@stencil/postcss";
 import { sass } from "@stencil/sass";
 import autoprefixer from "autoprefixer";
 import tailwind from "tailwindcss";
-// import { angularOutputTarget, ValueAccessorConfig } from "@stencil/angular-output-target";
+import { angularOutputTarget } from "@stencil/angular-output-target";
 import { reactOutputTarget } from "@stencil/react-output-target";
-// import { vueOutputTarget, ComponentModelConfig } from "@stencil/vue-output-target";
+import { angularValueAccessorBindings } from "./support/frameworks/angular";
+import { vueOutputTarget } from "@stencil/vue-output-target";
 // import { svelteOutputTarget, ComponentBindingConfig } from "@stencil/svelte-output-target";
-import { generatePreactTypes } from "./support/preact";
-
-// const angularValueAccessorBindings: ValueAccessorConfig[] = [
-  // {
-  //   elementSelectors: ['my-input[type=text]'],
-  //   event: 'myChange',
-  //   targetAttr: 'value',
-  //   type: 'text',
-  // },
-  // {
-  //   elementSelectors: ['my-input[type=number]'],
-  //   event: 'myChange',
-  //   targetAttr: 'value',
-  //   type: 'number',
-  // },
-  // {
-  //   elementSelectors: ['my-checkbox'],
-  //   event: 'myChange',
-  //   targetAttr: 'checked',
-  //   type: 'boolean',
-  // },
-  // {
-  //   elementSelectors: ['my-radio'],
-  //   event: 'mySelect',
-  //   targetAttr: 'checked',
-  //   type: 'radio',
-  // },
-  // {
-  //   elementSelectors: ['my-range', 'my-radio-group'],
-  //   event: 'myChange',
-  //   targetAttr: 'value',
-  //   type: 'select',
-  // },
-// ];
-
+// import { generatePreactTypes } from "./support/frameworks/preact";
+import { vueComponentModels } from "./support/frameworks/vue";
 // const vueComponentModels: ComponentModelConfig[] = [
   // {
   //   elements: ['my-input', 'my-range'],
@@ -148,46 +116,46 @@ export const create: () => Config = () => ({
     { components: ["calcite-tree", "calcite-tree-item"] }
   ],
   outputTargets: [
-    { type: "dist-hydrate-script" },
-    { type: "dist-custom-elements-bundle" },
-    { type: "dist" },
-    { type: "docs-readme" },
-    { type: "custom", name: "preact", generator: generatePreactTypes },
+    // { type: "dist-hydrate-script" },
+    // { type: "dist-custom-elements-bundle" },
+    // { type: "dist" },
+    // { type: "docs-readme" },
+    // { type: "custom", name: "preact", generator: generatePreactTypes },
     // angularOutputTarget({
     //   componentCorePackage: "@esri/calcite-components",
     //   directivesProxyFile: "./frameworks/angular/src/directives/proxies.ts",
     //   valueAccessorConfigs: angularValueAccessorBindings,
     // }),
-    reactOutputTarget({
-      componentCorePackage: "@esri/calcite-components",
-      proxiesFile: "./frameworks/react/src/components.ts",
-    }),
-    // vueOutputTarget({
+    // reactOutputTarget({
     //   componentCorePackage: "@esri/calcite-components",
-    //   proxiesFile: "./frameworks/vue/src/proxies.ts",
-    //   componentModels: vueComponentModels,
+    //   proxiesFile: "./frameworks/react/src/components.ts",
     // }),
+    vueOutputTarget({
+      componentCorePackage: "@esri/calcite-components",
+      proxiesFile: "./frameworks/vue/src/components.ts",
+      componentModels: vueComponentModels,
+    }),
     // svelteOutputTarget({
     //   accessors: true,
     //   componentCorePackage: "@esri/calcite-components",
     //   proxiesFile: "../calcite-components-svelte/src/proxies.ts",
     //   componentBindings: svelteComponentBindings,
     // }),
-    {
-      type: "www",
-      baseUrl: "https://stenciljs.com/",
-      prerenderConfig: "./prerender.config.ts",
-      copy: [
-        { src: "demos", dest: "demos" },
-        {
-          src: "../node_modules/dedent/dist",
-          dest: "vendor/dedent"
-        }
-      ],
-      serviceWorker: {
-        unregister: true
-      }
-    }
+    // {
+    //   type: "www",
+    //   baseUrl: "https://stenciljs.com/",
+    //   prerenderConfig: "./prerender.config.ts",
+    //   copy: [
+    //     { src: "demos", dest: "demos" },
+    //     {
+    //       src: "../node_modules/dedent/dist",
+    //       dest: "vendor/dedent"
+    //     }
+    //   ],
+    //   serviceWorker: {
+    //     unregister: true
+    //   }
+    // }
   ],
   globalStyle: "src/assets/styles/global.scss",
   plugins: [

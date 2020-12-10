@@ -10,6 +10,7 @@ You can set a min and max range, as well as an initial value with ISO 8601 forma
 
 <!-- Auto Generated Below -->
 
+
 ## Properties
 
 | Property          | Attribute           | Description                                                 | Type                | Default                                      |
@@ -25,19 +26,26 @@ You can set a min and max range, as well as an initial value with ISO 8601 forma
 | `value`           | `value`             | Selected date                                               | `string`            | `undefined`                                  |
 | `valueAsDate`     | --                  | Selected date as full date object                           | `Date`              | `undefined`                                  |
 
+
 ## Events
 
 | Event               | Description                                               | Type                |
 | ------------------- | --------------------------------------------------------- | ------------------- |
 | `calciteDateChange` | Trigger calcite date change when a user changes the date. | `CustomEvent<Date>` |
 
+
 ## Methods
 
 ### `reposition() => Promise<void>`
 
+
+
 #### Returns
 
 Type: `Promise<void>`
+
+
+
 
 ## Dependencies
 
@@ -48,7 +56,6 @@ Type: `Promise<void>`
 - [calcite-date-month](../calcite-date-month)
 
 ### Graph
-
 ```mermaid
 graph TD;
   calcite-date --> calcite-input
@@ -61,6 +68,6 @@ graph TD;
   style calcite-date fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
----
+----------------------------------------------
 
-_Built with [StencilJS](https://stenciljs.com/)_
+*Built with [StencilJS](https://stenciljs.com/)*

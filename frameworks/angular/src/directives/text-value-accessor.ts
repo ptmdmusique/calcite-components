@@ -5,9 +5,9 @@ import { ValueAccessor } from './value-accessor';
 
 @Directive({
   /* tslint:disable-next-line:directive-selector */
-  selector: 'my-input[type=text]',
+  selector: 'calcite-input[type=color], calcite-input[type=date], calcite-input[type=datetime-local], calcite-input[type=email], calcite-input[type=file], calcite-input[type=image], calcite-input[type=month], calcite-input[type=password], calcite-input[type=search], calcite-input[type=tel], calcite-input[type=text], calcite-input[type=textarea], calcite-input[type=time], calcite-input[type=url], calcite-input[type=week]',
   host: {
-    '(myChange)': 'handleChangeEvent($event.target.value)'
+    '(calciteInputInput)': 'handleChangeEvent($event.target.value)'
   },
   providers: [
     {

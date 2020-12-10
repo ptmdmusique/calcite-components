@@ -5,9 +5,9 @@ import { ValueAccessor } from './value-accessor';
 
 @Directive({
   /* tslint:disable-next-line:directive-selector */
-  selector: 'my-input[type=number]',
+  selector: 'calcite-input[type=number]',
   host: {
-    '(myChange)': 'handleChangeEvent($event.target.value)'
+    '(calciteInputInput)': 'handleChangeEvent($event.target.value)'
   },
   providers: [
     {

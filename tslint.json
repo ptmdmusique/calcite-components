@@ -11,9 +11,5 @@
       "severity": "warn"
     }
   },
-  "exclude": [
-    "node_modules",
-    "frameworks"
-  ],
   "rulesDirectory": ["node_modules/tslint-stencil/rules"]
 }
