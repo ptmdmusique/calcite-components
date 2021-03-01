@@ -61,10 +61,10 @@ export class CalciteInlineEditable {
   @Prop({ reflect: true }) intlConfirmChanges = TEXT.intlConfirmChanges;
 
   /** specify the scale of the inline-editable component, defaults to the scale of the wrapped calcite-input or the scale of the closest wrapping component with a set scale */
-  @Prop({ reflect: true }) scale?: Scale;
+  @Prop({ reflect: true, mutable: true }) scale?: Scale;
 
   /** specify the theme of the inline-editable component, defaults to the theme of the wrapped calcite-input or the theme of the closest wrapping component with a set theme */
-  @Prop({ reflect: true }) theme?: Theme;
+  @Prop({ reflect: true, mutable: true }) theme?: Theme;
 
   /** when controls, specify a callback to be executed prior to disabling editing. when provided, loading state will be handled automatically. */
   @Prop() afterConfirm?: () => Promise<void>;
@@ -106,7 +106,7 @@ export class CalciteInlineEditable {
                 appearance="transparent"
                 aria-label={this.intlEnableEditing}
                 class="calcite-inline-editable-enable-editing-button"
-                color="dark"
+                color="neutral"
                 disabled={this.disabled}
                 iconStart="pencil"
                 onClick={this.enableEditingHandler}
@@ -121,7 +121,7 @@ export class CalciteInlineEditable {
                   appearance="transparent"
                   aria-label={this.intlCancelEditing}
                   class="calcite-inline-editable-cancel-editing-button"
-                  color="dark"
+                  color="neutral"
                   disabled={this.disabled}
                   iconStart="x"
                   onClick={this.cancelEditingHandler}
