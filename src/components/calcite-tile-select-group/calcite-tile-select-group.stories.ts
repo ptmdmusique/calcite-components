@@ -2,9 +2,14 @@ import { select } from "@storybook/addon-knobs";
 import { darkBackground } from "../../../.storybook/utils";
 import { boolean } from "../../../.storybook/helpers";
 import { html } from "../../tests/utils";
+import readme from "./readme.md";
 
 export default {
-  title: "Components/Tiles/Tile Select Group"
+  title: "Components/Tiles/Tile Select Group",
+
+  parameters: {
+    notes: readme
+  }
 };
 
 export const Light = (): string => html`
@@ -17,6 +22,7 @@ export const Light = (): string => html`
       name="light"
       ${boolean("input-enabled", false)}
       input-alignment="${select("input-alignment", ["start", "end"], "start")}"
+      width="${select("width", ["full", "auto"], "auto")}"
       type="${select("type", ["radio", "checkbox"], "radio")}"
       value="one"
     >
@@ -28,6 +34,7 @@ export const Light = (): string => html`
       name="light"
       ${boolean("input-enabled", false)}
       input-alignment="${select("input-alignment", ["start", "end"], "start")}"
+      width="${select("width", ["full", "auto"], "auto")}"
       type="${select("type", ["radio", "checkbox"], "radio")}"
       value="two"
     >
@@ -39,6 +46,7 @@ export const Light = (): string => html`
       name="light"
       ${boolean("input-enabled", false)}
       input-alignment="${select("input-alignment", ["start", "end"], "start")}"
+      width="${select("width", ["full", "auto"], "auto")}"
       type="${select("type", ["radio", "checkbox"], "radio")}"
       value="three"
     >
@@ -51,6 +59,7 @@ export const Light = (): string => html`
       name="light"
       ${boolean("input-enabled", false)}
       input-alignment="${select("input-alignment", ["start", "end"], "start")}"
+      width="${select("width", ["full", "auto"], "auto")}"
       type="${select("type", ["radio", "checkbox"], "radio")}"
       value="four"
     >

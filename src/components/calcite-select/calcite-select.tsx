@@ -10,10 +10,11 @@ import {
   Prop,
   VNode
 } from "@stencil/core";
-import { focusElement, getElementDir, getElementProp } from "../../utils/dom";
+import { Direction, focusElement, getElementDir } from "../../utils/dom";
 import { Scale, Theme, Width } from "../interfaces";
 import { CSS } from "./resources";
 import { FocusRequest } from "../calcite-label/interfaces";
+import { CSS_UTILITY } from "../../utils/resources";
 
 type CalciteOptionOrGroup = HTMLCalciteOptionElement | HTMLCalciteOptionGroupElement;
 type NativeOptionOrGroup = HTMLOptionElement | HTMLOptGroupElement;
@@ -75,8 +76,7 @@ export class CalciteSelect {
    * The component theme.
    */
   @Prop({
-    reflect: true,
-    mutable: true
+    reflect: true
   })
   theme: Theme;
 
@@ -116,8 +116,6 @@ export class CalciteSelect {
       subtree: true,
       childList: true
     });
-
-    if (!this.theme) this.theme = getElementProp(this.el, "theme", "light");
   }
 
   disconnectedCallback(): void {
@@ -165,7 +163,7 @@ export class CalciteSelect {
       return;
     }
 
-    this.updateNativeElements(optionOrGroup, nativeEl);
+    this.updateNativeElement(optionOrGroup, nativeEl);
 
     if (isOption(optionOrGroup) && optionOrGroup.selected) {
       this.deselectAllExcept(optionOrGroup);
@@ -189,7 +187,7 @@ export class CalciteSelect {
   //
   //--------------------------------------------------------------------------
 
-  private updateNativeElements(
+  private updateNativeElement(
     optionOrGroup: CalciteOptionOrGroup,
     nativeOptionOrGroup: NativeOptionOrGroup
   ): void {
@@ -200,6 +198,10 @@ export class CalciteSelect {
       const option = nativeOptionOrGroup as HTMLOptionElement;
       option.selected = optionOrGroup.selected;
       option.value = optionOrGroup.value;
+
+      // need to set innerText for mobile
+      // see https://stackoverflow.com/questions/35021620/ios-safari-not-showing-all-options-for-select-menu/41749701
+      option.innerText = optionOrGroup.label;
     }
   }
 
@@ -251,12 +253,7 @@ export class CalciteSelect {
   ): NativeOptionOrGroup {
     if (isOption(optionOrGroup)) {
       const option = document.createElement("option");
-
-      option.disabled = optionOrGroup.disabled;
-      option.label = optionOrGroup.label;
-      option.selected = optionOrGroup.selected;
-      option.value = optionOrGroup.value;
-
+      this.updateNativeElement(optionOrGroup, option);
       this.componentToNativeEl.set(optionOrGroup, option);
 
       return option;
@@ -264,9 +261,7 @@ export class CalciteSelect {
 
     if (isOptionGroup(optionOrGroup)) {
       const group = document.createElement("optgroup");
-
-      group.disabled = optionOrGroup.disabled;
-      group.label = optionOrGroup.label;
+      this.updateNativeElement(optionOrGroup, group);
 
       Array.from(optionOrGroup.children as HTMLCollectionOf<HTMLCalciteOptionElement>).forEach(
         (option) => {
@@ -304,9 +299,9 @@ export class CalciteSelect {
   //
   //--------------------------------------------------------------------------
 
-  renderChevron(): VNode {
+  renderChevron(dir: Direction): VNode {
     return (
-      <div class={{ [CSS.iconContainer]: true }}>
+      <div class={{ [CSS.iconContainer]: true, [CSS_UTILITY.rtl]: dir === "rtl" }}>
         <calcite-icon class={CSS.icon} icon="chevron-down" scale="s" />
       </div>
     );
@@ -316,17 +311,17 @@ export class CalciteSelect {
     const dir = getElementDir(this.el);
 
     return (
-      <Host dir={dir}>
+      <Host>
         <select
           aria-label={this.label}
-          class={{ [CSS.select]: true }}
+          class={{ [CSS.select]: true, [CSS_UTILITY.rtl]: dir === "rtl" }}
           disabled={this.disabled}
           onChange={this.handleInternalSelectChange}
           ref={this.storeSelectRef}
         >
           <slot />
         </select>
-        {this.renderChevron()}
+        {this.renderChevron(dir)}
       </Host>
     );
   }

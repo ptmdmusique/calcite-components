@@ -4,8 +4,8 @@ import { Theme } from "../interfaces";
 import { getSlotted } from "../../utils/dom";
 
 /**
- * @slot shell-header - A slot for adding header content. This content will be positioned at the top of the shell.
- * @slot shell-footer - A slot for adding footer content. This content will be positioned at the bottom of the shell.
+ * @slot header - A slot for adding header content. This content will be positioned at the top of the shell.
+ * @slot footer - A slot for adding footer content. This content will be positioned at the bottom of the shell.
  * @slot primary-panel - A slot for adding the leading `calcite-shell-panel`.
  * @slot contextual-panel - A slot for adding the trailing `calcite-shell-panel`.
  * @slot bottom-panel - A slot for adding a bottom floating panel such as a chart or `calcite-tip-manager`.
@@ -53,36 +53,27 @@ export class CalciteShell {
     return hasHeader ? <slot name={SLOTS.header} /> : null;
   }
 
-  renderContent(): VNode {
-    return !!this.contentBehind ? this.renderContentBehind() : this.renderContentInline();
-  }
+  renderContent(): VNode[] {
+    const content = !!this.contentBehind
+      ? [
+          <div
+            class={{
+              [CSS.content]: true,
+              [CSS.contentBehind]: !!this.contentBehind
+            }}
+          >
+            <slot />
+          </div>,
+          <slot name="center-row" />
+        ]
+      : [
+          <div class={CSS.content}>
+            <slot />
+            <slot name="center-row" />
+          </div>
+        ];
 
-  renderContentBehind(): VNode {
-    return (
-      <div
-        class={{
-          [CSS.content]: true,
-          [CSS.contentBehind]: !!this.contentBehind
-        }}
-      >
-        <slot />
-      </div>
-    );
-  }
-
-  renderContentInline(): VNode {
-    return (
-      <div class={CSS.content}>
-        <slot />
-        {this.renderCenterRow()}
-      </div>
-    );
-  }
-
-  renderCenterRow(): VNode {
-    const hasCenterRow = !!getSlotted(this.el, SLOTS.centerRow);
-
-    return hasCenterRow ? <slot name={SLOTS.centerRow} /> : null;
+    return content;
   }
 
   renderFooter(): VNode {
@@ -107,7 +98,6 @@ export class CalciteShell {
       <div class={mainClasses}>
         <slot name={SLOTS.primaryPanel} />
         {this.renderContent()}
-        {!!this.contentBehind ? this.renderCenterRow() : null}
         <slot name={SLOTS.contextualPanel} />
       </div>
     );

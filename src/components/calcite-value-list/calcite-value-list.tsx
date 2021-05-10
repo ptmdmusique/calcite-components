@@ -13,6 +13,7 @@ import {
 } from "@stencil/core";
 import { CSS, ICON_TYPES } from "./resources";
 import {
+  ListFocusId,
   calciteListItemChangeHandler,
   calciteListItemValueChangeHandler,
   cleanUpObserver,
@@ -31,6 +32,7 @@ import {
 } from "../calcite-pick-list/shared-list-logic";
 import List from "../calcite-pick-list/shared-list-render";
 import { getRoundRobinIndex } from "../../utils/array";
+import { Theme } from "../interfaces";
 
 /**
  * @slot - A slot for adding `calcite-pick-list-item` elements or `calcite-pick-list-group` elements. Items are displayed as a vertical list.
@@ -88,6 +90,9 @@ export class CalciteValueList<
    */
   @Prop({ reflect: true }) multiple = false;
 
+  /** Select theme (light or dark) */
+  @Prop({ reflect: true }) theme: Theme;
+
   // --------------------------------------------------------------------------
   //
   //  Private Properties
@@ -109,6 +114,8 @@ export class CalciteValueList<
   @Element() el: HTMLCalciteValueListElement;
 
   emitCalciteListChange: () => void;
+
+  filterEl: HTMLCalciteFilterElement;
 
   // --------------------------------------------------------------------------
   //
@@ -183,12 +190,17 @@ export class CalciteValueList<
     }
   }
 
+  setFilterEl = (el: HTMLCalciteFilterElement): void => {
+    this.filterEl = el;
+  };
+
   setUpDragAndDrop(): void {
     if (!this.dragEnabled) {
       return;
     }
 
     this.sortable = Sortable.create(this.el, {
+      dataIdAttr: "id",
       handle: `.${CSS.handle}`,
       draggable: "calcite-value-list-item",
       group: this.group,
@@ -272,8 +284,8 @@ export class CalciteValueList<
   }
 
   @Method()
-  async setFocus(): Promise<void> {
-    return setFocus.call(this);
+  async setFocus(focusId?: ListFocusId): Promise<void> {
+    return setFocus.call(this, focusId);
   }
 
   // --------------------------------------------------------------------------

@@ -12,6 +12,7 @@ import {
 } from "@stencil/core";
 import { ICON_TYPES } from "./resources";
 import {
+  ListFocusId,
   calciteListItemChangeHandler,
   calciteListItemValueChangeHandler,
   cleanUpObserver,
@@ -29,6 +30,8 @@ import {
   removeItem
 } from "./shared-list-logic";
 import List from "./shared-list-render";
+import { Theme } from "../interfaces";
+import { HeadingLevel } from "../functional/CalciteHeading";
 
 /**
  * @slot - A slot for adding `calcite-pick-list-item` elements or `calcite-pick-list-group` elements. Items are displayed as a vertical list.
@@ -64,6 +67,11 @@ export class CalcitePickList<
   @Prop({ reflect: true }) filterPlaceholder: string;
 
   /**
+   * Number at which section headings should start for this component.
+   */
+  @Prop() headingLevel: HeadingLevel;
+
+  /**
    * When true, content is waiting to be loaded. This state shows a busy indicator.
    */
   @Prop({ reflect: true }) loading = false;
@@ -75,6 +83,9 @@ export class CalcitePickList<
    * and selecting a new item will deselect any other selected items.
    */
   @Prop({ reflect: true }) multiple = false;
+
+  /** Select theme (light or dark) */
+  @Prop({ reflect: true }) theme: Theme;
 
   // --------------------------------------------------------------------------
   //
@@ -95,6 +106,8 @@ export class CalcitePickList<
   @Element() el: HTMLCalcitePickListElement;
 
   emitCalciteListChange: () => void;
+
+  filterEl: HTMLCalciteFilterElement;
 
   // --------------------------------------------------------------------------
   //
@@ -159,6 +172,10 @@ export class CalcitePickList<
     }
   }
 
+  setFilterEl = (el: HTMLCalciteFilterElement): void => {
+    this.filterEl = el;
+  };
+
   deselectSiblingItems = deselectSiblingItems.bind(this);
 
   selectSiblings = selectSiblings.bind(this);
@@ -181,8 +198,8 @@ export class CalcitePickList<
   }
 
   @Method()
-  async setFocus(): Promise<void> {
-    return setFocus.call(this);
+  async setFocus(focusId?: ListFocusId): Promise<void> {
+    return setFocus.call(this, focusId);
   }
 
   // --------------------------------------------------------------------------

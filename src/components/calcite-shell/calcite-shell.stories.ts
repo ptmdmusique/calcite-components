@@ -7,7 +7,7 @@ import panelReadme from "../calcite-shell-panel/readme.md";
 import { html, placeholderImage } from "../../tests/utils";
 
 export default {
-  title: "Components/App/Shell",
+  title: "Components/Shell",
   parameters: {
     backgrounds: darkBackground,
     notes: {
@@ -128,12 +128,12 @@ const trailingPanelHTML = html`
 `;
 
 const headerHTML = html`
-  <header slot="shell-header">
+  <header slot="header">
     <h2>My Shell Header</h2>
   </header>
 `;
 
-const footerHTML = `<footer slot="shell-footer">My Shell Footer</footer>`;
+const footerHTML = `<footer slot="footer">My Shell Footer</footer>`;
 
 const contentHTML = html`
   <div

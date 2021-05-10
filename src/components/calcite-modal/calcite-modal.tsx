@@ -1,4 +1,5 @@
 import {
+  Build,
   Component,
   Element,
   Event,
@@ -18,6 +19,7 @@ import { queryShadowRoot } from "@a11y/focus-trap/shadow";
 import { isFocusable, isHidden } from "@a11y/focus-trap/focusable";
 import { Scale, Theme } from "../interfaces";
 import { ModalBackgroundColor } from "./interfaces";
+import { CSS_UTILITY } from "../../utils/resources";
 
 function isCalciteFocusable(el: CalciteFocusableElement): boolean {
   return typeof el.setFocus === "function" || isFocusable(el);
@@ -46,7 +48,7 @@ export class CalciteModal {
   //
   //--------------------------------------------------------------------------
   /** Add the active attribute to open the modal */
-  @Prop({ mutable: true }) active?: boolean;
+  @Prop({ mutable: true, reflect: true }) active?: boolean;
 
   /** Optionally pass a function to run before close */
   @Prop() beforeClose: (el: HTMLElement) => Promise<void> = () => Promise.resolve();
@@ -100,17 +102,29 @@ export class CalciteModal {
     }
   }
 
+  componentDidLoad(): void {
+    this.observer?.observe(this.el, { childList: true, subtree: true });
+  }
+
+  connectedCallback(): void {
+    if (Build.isBrowser) {
+      this.observer = new MutationObserver(this.updateFooterVisibility);
+      this.updateFooterVisibility();
+    }
+  }
+
   disconnectedCallback(): void {
     this.removeOverflowHiddenClass();
+    this.observer?.disconnect();
   }
 
   render(): VNode {
     const dir = getElementDir(this.el);
     return (
-      <Host aria-modal="true" dir={dir} is-active={this.isActive} role="dialog">
+      <Host aria-modal="true" role="dialog">
         <calcite-scrim class="scrim" theme="dark" />
         {this.renderStyle()}
-        <div class="modal">
+        <div class={{ modal: true, [CSS_UTILITY.rtl]: dir === "rtl" }}>
           <div data-focus-fence onFocus={this.focusLastElement} tabindex="0" />
           <div class="header">
             {this.renderCloseButton()}
@@ -121,7 +135,8 @@ export class CalciteModal {
           <div
             class={{
               content: true,
-              "content--spaced": !this.noPadding
+              "content--spaced": !this.noPadding,
+              "content--no-footer": !this.hasFooter
             }}
             ref={(el) => (this.modalContent = el)}
           >
@@ -135,7 +150,7 @@ export class CalciteModal {
   }
 
   renderFooter(): VNode {
-    return this.el.querySelector("[slot=back], [slot=secondary], [slot=primary]") ? (
+    return this.hasFooter ? (
       <div class="footer">
         <span class="back">
           <slot name="back" />
@@ -170,20 +185,20 @@ export class CalciteModal {
       <style>
         {`
         .modal {
-          max-width: ${this.width}px;
+          max-width: ${this.width}px !important;
         }
         @media screen and (max-width: ${this.width}px) {
           .modal {
-            height: 100%;
-            max-height: 100%;
-            width: 100%;
-            max-width: 100%;
-            margin: 0;
-            border-radius: 0;
+            height: 100% !important;
+            max-height: 100% !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            border-radius: 0 !important;
           }
           .content {
-            flex: 1 1 auto;
-            max-height: unset;
+            flex: 1 1 auto !important;
+            max-height: unset !important;
           }
         }
       `}
@@ -196,7 +211,7 @@ export class CalciteModal {
   //  Variables
   //
   //--------------------------------------------------------------------------
-  @State() isActive: boolean;
+  @State() hasFooter = true;
 
   previousActiveElement: HTMLElement;
 
@@ -205,6 +220,8 @@ export class CalciteModal {
   modalContent: HTMLDivElement;
 
   focusTimeout: number;
+
+  private observer: MutationObserver = null;
 
   //--------------------------------------------------------------------------
   //
@@ -294,7 +311,7 @@ export class CalciteModal {
   /** Open the modal */
   private open() {
     this.previousActiveElement = document.activeElement as HTMLElement;
-    this.isActive = true;
+    this.active = true;
     clearTimeout(this.focusTimeout);
     // wait for the modal to open, then handle focus.
     this.focusTimeout = window.setTimeout(() => {
@@ -308,7 +325,6 @@ export class CalciteModal {
   close = (): Promise<void> => {
     return this.beforeClose(this.el).then(() => {
       this.active = false;
-      this.isActive = false;
       focusElement(this.previousActiveElement);
       this.removeOverflowHiddenClass();
       setTimeout(() => this.calciteModalClose.emit(), 300);
@@ -333,4 +349,8 @@ export class CalciteModal {
   private removeOverflowHiddenClass(): void {
     document.documentElement.classList.remove("overflow-hidden");
   }
+
+  private updateFooterVisibility = (): void => {
+    this.hasFooter = !!this.el.querySelector("[slot=back], [slot=secondary], [slot=primary]");
+  };
 }

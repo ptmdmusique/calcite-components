@@ -4,6 +4,7 @@ import {
   Event,
   EventEmitter,
   h,
+  Listen,
   Method,
   Prop,
   State,
@@ -192,7 +193,7 @@ export class CalciteColorPicker {
   @Prop({
     reflect: true
   })
-  theme: Theme = "light";
+  theme: Theme;
 
   /**
    * The color value.
@@ -275,6 +276,16 @@ export class CalciteColorPicker {
 
   @State() savedColors: string[] = [];
 
+  @State() colorFieldScopeTop: number;
+
+  @State() colorFieldScopeLeft: number;
+
+  @State() scopeOrientation: "vertical" | "horizontal";
+
+  @State() hueScopeLeft: number;
+
+  @State() hueScopeTop: number;
+
   //--------------------------------------------------------------------------
   //
   //  Events
@@ -293,6 +304,47 @@ export class CalciteColorPicker {
     ) as ColorMode;
 
     this.updateChannelsFromColor(this.color);
+  };
+
+  private handleColorFieldScopeKeyDown = (event: KeyboardEvent): void => {
+    const key = getKey(event.key);
+    const arrowKeyToXYOffset = {
+      ArrowUp: { x: 0, y: -10 },
+      ArrowRight: { x: 10, y: 0 },
+      ArrowDown: { x: 0, y: 10 },
+      ArrowLeft: { x: -10, y: 0 }
+    };
+
+    if (Object.keys(arrowKeyToXYOffset).includes(key)) {
+      event.preventDefault();
+      this.scopeOrientation = key === "ArrowDown" || key === "ArrowUp" ? "vertical" : "horizontal";
+      this.captureColorFieldColor(
+        this.colorFieldScopeLeft + arrowKeyToXYOffset[key].x || 0,
+        this.colorFieldScopeTop + arrowKeyToXYOffset[key].y || 0,
+        false
+      );
+      return;
+    }
+  };
+
+  private handleHueScopeKeyDown = (event: KeyboardEvent): void => {
+    const modifier = event.shiftKey ? 10 : 1;
+    const key = getKey(event.key);
+    const arrowKeyToXOffset = {
+      ArrowUp: 1,
+      ArrowRight: 1,
+      ArrowDown: -1,
+      ArrowLeft: -1
+    };
+
+    if (Object.keys(arrowKeyToXOffset).includes(key)) {
+      event.preventDefault();
+      const delta = arrowKeyToXOffset[key] * modifier;
+      const hue = this.baseColorFieldColor?.hue();
+      const color = hue ? this.baseColorFieldColor.hue(hue + delta) : Color({ h: 0, s: 0, v: 100 });
+      this.internalColorSet(color, false);
+      return;
+    }
   };
 
   private handleHexInputChange = (event: Event): void => {
@@ -320,8 +372,8 @@ export class CalciteColorPicker {
 
   private handleChannelInput = (event: CustomEvent): void => {
     const input = event.currentTarget as HTMLCalciteInputElement;
-    const internalInput = event.target as HTMLInputElement;
-    const channelIndex = Number(internalInput.getAttribute("data-channel-index"));
+    const internalInput = event.detail.nativeEvent.target as HTMLInputElement;
+    const channelIndex = Number(input.getAttribute("data-channel-index"));
 
     const limit =
       this.channelMode === "rgb"
@@ -330,26 +382,39 @@ export class CalciteColorPicker {
 
     let inputValue: string;
 
-    if (this.allowEmpty && !internalInput.value) {
+    if (this.allowEmpty && !input.value) {
       inputValue = "";
     } else {
-      const value = Number(internalInput.value) + this.shiftKeyChannelAdjustment;
+      const value = Number(input.value) + this.shiftKeyChannelAdjustment;
       const clamped = Math.max(0, Math.min(value, limit));
 
       inputValue = clamped.toString();
     }
 
-    // need to update both calcite-input and its internal input to keep them in sync
     input.value = inputValue;
     internalInput.value = inputValue;
   };
 
-  private handleChannelKeyUpOrDown = (event: KeyboardEvent): void => {
-    const { shiftKey } = event;
+  // using @Listen as a workaround for VDOM listener not firing
+  @Listen("keydown", { capture: true })
+  @Listen("keyup", { capture: true })
+  protected handleChannelKeyUpOrDown(event: KeyboardEvent): void {
+    this.shiftKeyChannelAdjustment = 0;
     const key = getKey(event.key);
 
-    if (!this.color && (key === "ArrowUp" || key === "ArrowDown")) {
-      event.preventDefault();
+    if (
+      (key !== "ArrowUp" && key !== "ArrowDown") ||
+      !event.composedPath().some((node: HTMLElement) => node.classList?.contains(CSS.channel))
+    ) {
+      return;
+    }
+
+    const { shiftKey } = event;
+    event.preventDefault();
+
+    if (!this.color) {
+      this.internalColorSet(this.previousColor);
+      event.stopPropagation();
       return;
     }
 
@@ -362,10 +427,10 @@ export class CalciteColorPicker {
         : key === "ArrowDown" && shiftKey
         ? -complementaryBump
         : 0;
-  };
+  }
 
-  private handleChannelChange = (event: KeyboardEvent): void => {
-    const input = event.target as HTMLInputElement;
+  private handleChannelChange = (event: CustomEvent): void => {
+    const input = event.currentTarget as HTMLCalciteInputElement;
     const channelIndex = Number(input.getAttribute("data-channel-index"));
     const channels = [...this.channels] as this["channels"];
 
@@ -462,22 +527,59 @@ export class CalciteColorPicker {
     } = this;
     const selectedColorInHex = color ? color.hex() : null;
     const hexInputScale = scale !== "s" ? "m" : scale;
-    const { colorFieldAndSliderInteractive } = this;
+    const {
+      colorFieldAndSliderInteractive,
+      colorFieldScopeTop,
+      colorFieldScopeLeft,
+      hueScopeLeft,
+      hueScopeTop,
+      scopeOrientation,
+      dimensions: {
+        colorField: { height: colorFieldHeight, width: colorFieldWidth },
+        slider: { height: sliderHeight }
+      }
+    } = this;
+    const hueTop = hueScopeTop || sliderHeight / 2 + colorFieldHeight;
+    const hueLeft = hueScopeLeft || (colorFieldWidth * DEFAULT_COLOR.hue()) / HSV_LIMITS.h;
     const elementDir = getElementDir(el);
     const noColor = color === null;
-
+    const vertical = scopeOrientation === "vertical";
     return (
       <div class={CSS.container}>
-        <canvas
-          class={{
-            [CSS.colorFieldAndSlider]: true,
-            [CSS.colorFieldAndSliderInteractive]: colorFieldAndSliderInteractive
-          }}
-          onMouseEnter={this.handleColorFieldAndSliderMouseEnterOrMove}
-          onMouseLeave={this.handleColorFieldAndSliderMouseLeave}
-          onMouseMove={this.handleColorFieldAndSliderMouseEnterOrMove}
-          ref={this.initColorFieldAndSlider}
-        />
+        <div class={CSS.colorFieldAndSliderWrap}>
+          <canvas
+            class={{
+              [CSS.colorFieldAndSlider]: true,
+              [CSS.colorFieldAndSliderInteractive]: colorFieldAndSliderInteractive
+            }}
+            onMouseEnter={this.handleColorFieldAndSliderMouseEnterOrMove}
+            onMouseLeave={this.handleColorFieldAndSliderMouseLeave}
+            onMouseMove={this.handleColorFieldAndSliderMouseEnterOrMove}
+            ref={this.initColorFieldAndSlider}
+          />
+          <div
+            aria-label={vertical ? this.intlValue : this.intlSaturation}
+            aria-valuemax={vertical ? HSV_LIMITS.v : HSV_LIMITS.s}
+            aria-valuemin="0"
+            aria-valuenow={(vertical ? color?.saturationv() : color?.value()) || "0"}
+            class={CSS.scope}
+            onKeyDown={this.handleColorFieldScopeKeyDown}
+            role="slider"
+            style={{ top: `${colorFieldScopeTop || 0}px`, left: `${colorFieldScopeLeft || 0}px` }}
+            tabindex="0"
+          />
+          <div
+            aria-label={this.intlHue}
+            aria-valuemax={HSV_LIMITS.h}
+            aria-valuemin="0"
+            aria-valuenow={color?.round().hue() || DEFAULT_COLOR.round().hue()}
+            class={CSS.scope}
+            onKeyDown={this.handleHueScopeKeyDown}
+            role="slider"
+            style={{ top: `${hueTop}px`, left: `${hueLeft}px` }}
+            tabindex="0"
+          />
+        </div>
         {hideHex && hideChannels ? null : (
           <div class={{ [CSS.controlSection]: true, [CSS.section]: true }}>
             {hideHex ? null : (
@@ -589,6 +691,7 @@ export class CalciteColorPicker {
         active={active}
         class={CSS.colorMode}
         data-color-mode={channelMode}
+        key={channelMode}
         onCalciteTabsActivate={this.handleTabActivate}
       >
         {label}
@@ -622,7 +725,7 @@ export class CalciteColorPicker {
       : [intlHue, intlSaturation, intlValue];
 
     return (
-      <calcite-tab active={active} class={CSS.control}>
+      <calcite-tab active={active} class={CSS.control} key={channelMode}>
         <div class={CSS.channels}>
           {channels.map((channel, index) =>
             this.renderChannel(channel, index, channelLabels[index], channelAriaLabels[index])
@@ -643,14 +746,12 @@ export class CalciteColorPicker {
       class={CSS.channel}
       data-channel-index={index}
       numberButtonType="none"
-      onChange={this.handleChannelChange}
-      onInput={this.handleChannelInput}
-      onKeyDown={this.handleChannelKeyUpOrDown}
-      onKeyUp={this.handleChannelKeyUpOrDown}
+      onCalciteInputChange={this.handleChannelChange}
+      onCalciteInputInput={this.handleChannelInput}
       prefixText={label}
       scale="s"
       type="number"
-      value={value !== null ? value.toString() : ""}
+      value={value?.toString()}
     />
   );
 
@@ -800,6 +901,21 @@ export class CalciteColorPicker {
     context.scale(devicePixelRatio, devicePixelRatio);
   }
 
+  private captureColorFieldColor = (x: number, y: number, skipEqual = true): void => {
+    const {
+      dimensions: {
+        colorField: { height, width }
+      }
+    } = this;
+    const saturation = Math.round((HSV_LIMITS.s / width) * x);
+    const value = Math.round((HSV_LIMITS.v / height) * (height - y));
+
+    this.internalColorSet(
+      this.baseColorFieldColor.hsv().saturationv(saturation).value(value),
+      skipEqual
+    );
+  };
+
   private initColorFieldAndSlider = (canvas: HTMLCanvasElement): void => {
     this.fieldAndSliderRenderingContext = canvas.getContext("2d");
     this.setCanvasContextSize(canvas, {
@@ -831,27 +947,15 @@ export class CalciteColorPicker {
       return "none";
     };
 
-    const captureColor = (x: number, y: number): void => {
-      const {
-        dimensions: {
-          colorField: { height, width }
-        }
-      } = this;
-      const saturation = Math.round((HSV_LIMITS.s / width) * x);
-      const value = Math.round((HSV_LIMITS.v / height) * (height - y));
-
-      this.internalColorSet(this.baseColorFieldColor.hsv().saturationv(saturation).value(value));
-    };
-
     canvas.addEventListener("mousedown", ({ offsetX, offsetY }) => {
       const region = yWithin(offsetY);
 
       if (region === "color-field") {
         this.hueThumbState = "drag";
-        captureColor(offsetX, offsetY);
+        this.captureColorFieldColor(offsetX, offsetY);
       } else if (region === "slider") {
         this.sliderThumbState = "drag";
-        captureSliderColor(offsetX);
+        captureHueSliderColor(offsetX);
       }
     });
 
@@ -906,7 +1010,7 @@ export class CalciteColorPicker {
           return;
         }
 
-        captureColor(offsetX, offsetY);
+        this.captureColorFieldColor(offsetX, offsetY);
       } else if (region === "slider") {
         const {
           dimensions: {
@@ -947,11 +1051,11 @@ export class CalciteColorPicker {
           return;
         }
 
-        captureSliderColor(offsetX);
+        captureHueSliderColor(offsetX);
       }
     });
 
-    const captureSliderColor = (x: number): void => {
+    const captureHueSliderColor = (x: number): void => {
       const {
         dimensions: {
           slider: { width }
@@ -994,6 +1098,11 @@ export class CalciteColorPicker {
 
     const x = hsvColor.saturationv() / (HSV_LIMITS.s / width);
     const y = height - hsvColor.value() / (HSV_LIMITS.v / height);
+
+    requestAnimationFrame(() => {
+      this.colorFieldScopeLeft = x;
+      this.colorFieldScopeTop = y;
+    });
 
     this.drawThumb(this.fieldAndSliderRenderingContext, radius, x, y, hsvColor, this.hueThumbState);
   }
@@ -1043,6 +1152,11 @@ export class CalciteColorPicker {
 
     const x = hsvColor.hue() / (360 / width);
     const y = height / 2 + colorFieldHeight;
+
+    requestAnimationFrame(() => {
+      this.hueScopeLeft = x;
+      this.hueScopeTop = y;
+    });
 
     this.drawThumb(
       this.fieldAndSliderRenderingContext,

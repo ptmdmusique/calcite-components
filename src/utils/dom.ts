@@ -1,10 +1,8 @@
-import { Theme } from "../components/interfaces";
-
 export function nodeListToArray<T extends Element>(nodeList: HTMLCollectionOf<T> | NodeListOf<T> | T[]): T[] {
   return Array.isArray(nodeList) ? nodeList : Array.from(nodeList);
 }
 
-type Direction = "ltr" | "rtl";
+export type Direction = "ltr" | "rtl";
 
 export function getAttributes(el: HTMLElement, blockList: string[]): Record<string, any> {
   return Array.from(el.attributes)
@@ -13,11 +11,7 @@ export function getAttributes(el: HTMLElement, blockList: string[]): Record<stri
 }
 
 export function getElementDir(el: HTMLElement): Direction {
-  return getElementProp(el, "dir", "ltr") as Direction;
-}
-
-export function getElementTheme(el: HTMLElement): Theme {
-  return getElementProp(el, "theme", "light") as Theme;
+  return getElementProp(el, "dir", "ltr", true) as Direction;
 }
 
 export function getElementProp(el: Element, prop: string, fallbackValue: any, crossShadowBoundary = false): any {
@@ -32,7 +26,9 @@ function closestElementCrossShadowBoundary<E extends Element = Element>(
 ): E | null {
   // based on https://stackoverflow.com/q/54520554/194216
   function closestFrom(el): E | null {
-    if (!el || el === document || el === window) return null;
+    if (!el || el === document || el === window) {
+      return null;
+    }
     const found = el.closest(selector);
     return found ? found : closestFrom(el.getRootNode().host);
   }
@@ -44,7 +40,7 @@ export interface CalciteFocusableElement extends HTMLElement {
   setFocus?: () => void;
 }
 
-export function focusElement(el: CalciteFocusableElement): void {
+export async function focusElement(el: CalciteFocusableElement): Promise<void> {
   if (!el) {
     return;
   }
@@ -115,10 +111,16 @@ export function filterDirectChildren<T extends Element>(el: Element, selector: s
   return Array.from(el.children).filter((child): child is T => child.matches(selector));
 }
 
-export function getElementByAttributeId<T extends Element>(element: Element, attrName: string): T | HTMLElement | null {
-  const id = element?.getAttribute(attrName);
+export function getRootNode(element: HTMLElement): HTMLDocument | ShadowRoot {
+  return element.getRootNode() as HTMLDocument | ShadowRoot;
+}
 
-  return (id && document.getElementById(id)) || null;
+export function getElementById(rootNode: HTMLDocument | ShadowRoot, id: string): HTMLElement {
+  return id
+    ? rootNode instanceof ShadowRoot
+      ? rootNode.host.querySelector(`#${id}`)
+      : rootNode.getElementById(id)
+    : null;
 }
 
 export function hasLabel(labelEl: HTMLCalciteLabelElement, el: HTMLElement): boolean {

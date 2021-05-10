@@ -101,6 +101,7 @@
 
           <calcite-shell-panel slot="contextual-panel" position="end">
             <calcite-action-bar slot="action-bar">
+              <calcite-tooltip slot="expand-tooltip" label="tooltip"  disable-pointer>Add layers</calcite-tooltip>
               <calcite-action-group>
                 <calcite-action text="Layer properties" icon="sliders-horizontal"> </calcite-action>
                 <calcite-action text="Styles" icon="shapes"> </calcite-action>
@@ -228,7 +229,7 @@
               </calcite-panel>
             </calcite-flow>
           </calcite-shell-panel>
-          <div class="gnav" slot="shell-header">
+          <div class="gnav" slot="header">
               <h2>Boomer v Millennial - California</h2>
           </div>
           <calcite-tip-manager slot="center-row" id="tip-manager" hidden>
@@ -283,7 +284,7 @@
           </calcite-tip-manager>
           <div id="viewDiv"></div>
 
-          <footer slot="shell-footer">Footer</footer>
+          <footer slot="footer">Footer</footer>
         </calcite-shell>
       </div>
       <calcite-popover label="right start popover" placement="right-start" reference-element="action-pad-button" add-click-handle class="popover">

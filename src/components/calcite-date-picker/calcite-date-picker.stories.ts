@@ -3,57 +3,7 @@ import { select, text, boolean } from "@storybook/addon-knobs";
 import { darkBackground } from "../../../.storybook/utils";
 import readme from "./readme.md";
 import { html } from "../../tests/utils";
-
-const locales = [
-  "ar",
-  "bs",
-  "ca",
-  "cs",
-  "da",
-  "de-CH",
-  "de",
-  "el",
-  "en-AU",
-  "en-CA",
-  "en-GB",
-  "en",
-  "es-MX",
-  "es",
-  "et",
-  "fi",
-  "fr-CH",
-  "fr",
-  "he",
-  "hi",
-  "hr",
-  "hu",
-  "id",
-  "it-CH",
-  "it",
-  "ja",
-  "ko",
-  "lt",
-  "lv",
-  "mk",
-  "nb",
-  "nl",
-  "pl",
-  "pt-PT",
-  "pt",
-  "ro",
-  "ru",
-  "sk",
-  "sl",
-  "sr",
-  "sv",
-  "th",
-  "tr",
-  "uk",
-  "vi",
-  "zh-CN",
-  "zh-HK",
-  "zh-TW"
-];
+import { locales } from "../../utils/locale";
 
 export default {
   title: "Components/Controls/DatePicker",
@@ -68,7 +18,7 @@ export const Simple = (): string => html`
     <calcite-date-picker
       scale="${select("scale", ["s", "m", "l"], "m")}"
       value="${text("value", "2020-12-12")}"
-      min="${text("min", "2016-08-09")}"
+      min="${text("min", "2020-12-03")}"
       max="${text("max", "2023-12-18")}"
       locale="${select("locale", locales, "en")}"
       intl-next-month="${text("intl-next-month", "Next month")}"

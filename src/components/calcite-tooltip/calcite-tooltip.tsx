@@ -7,9 +7,11 @@ import {
   defaultOffsetDistance,
   createPopper,
   updatePopper,
-  CSS as PopperCSS
+  CSS as PopperCSS,
+  OverlayPositioning
 } from "../../utils/popper";
 import { Theme } from "../interfaces";
+import { getElementById, getRootNode } from "../../utils/dom";
 
 @Component({
   tag: "calcite-tooltip",
@@ -55,6 +57,9 @@ export class CalciteTooltip {
   openHandler(): void {
     this.reposition();
   }
+
+  /** Describes the type of positioning to use for the overlaid content. If your element is in a fixed container, use the 'fixed' value. */
+  @Prop() overlayPositioning: OverlayPositioning = "absolute";
 
   /**
    * Determines where the component will be positioned relative to the referenceElement.
@@ -178,11 +183,12 @@ export class CalciteTooltip {
   };
 
   getReferenceElement(): HTMLElement {
-    const { referenceElement } = this;
+    const { referenceElement, el } = this;
+    const rootNode = getRootNode(el);
 
     return (
       (typeof referenceElement === "string"
-        ? document.getElementById(referenceElement)
+        ? getElementById(rootNode, referenceElement)
         : referenceElement) || null
     );
   }
@@ -212,13 +218,14 @@ export class CalciteTooltip {
   createPopper(): void {
     this.destroyPopper();
 
-    const { el, placement, _referenceElement: referenceEl } = this;
+    const { el, placement, _referenceElement: referenceEl, overlayPositioning } = this;
     const modifiers = this.getModifiers();
 
     this.popper = createPopper({
       el,
       modifiers,
       placement,
+      overlayPositioning,
       referenceEl
     });
   }

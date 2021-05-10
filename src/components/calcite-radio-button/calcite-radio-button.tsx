@@ -14,6 +14,7 @@ import {
 import { guid } from "../../utils/guid";
 import { focusElement, getElementDir } from "../../utils/dom";
 import { Scale, Theme } from "../interfaces";
+import { hiddenInputStyle } from "../../utils/form";
 
 @Component({
   tag: "calcite-radio-button",
@@ -65,7 +66,9 @@ export class CalciteRadioButton {
 
   @Watch("focused")
   focusedChanged(focused: boolean): void {
-    if (!this.inputEl) return;
+    if (!this.inputEl) {
+      return;
+    }
     if (focused && !this.el.hasAttribute("hidden")) {
       this.inputEl.focus();
     } else {
@@ -122,10 +125,10 @@ export class CalciteRadioButton {
   @Prop({ reflect: true }) scale: Scale = "m";
 
   /** The color theme of the radio button, <code>theme</code> is passed as a property automatically from <code>calcite-radio-button-group</code>. */
-  @Prop({ reflect: true }) theme: Theme = "light";
+  @Prop({ reflect: true }) theme: Theme;
 
   /** The value of the radio button. */
-  @Prop({ reflect: true }) value!: string;
+  @Prop() value!: any;
 
   //--------------------------------------------------------------------------
   //
@@ -278,12 +281,7 @@ export class CalciteRadioButton {
   };
 
   private hideInputEl = (): void => {
-    this.inputEl.style.setProperty("margin", "0", "important");
-    this.inputEl.style.setProperty("opacity", "0", "important");
-    this.inputEl.style.setProperty("padding", "0", "important");
-    this.inputEl.style.setProperty("position", "absolute", "important");
-    this.inputEl.style.setProperty("transform", "none", "important");
-    this.inputEl.style.setProperty("z-index", "-1", "important");
+    this.inputEl.style.cssText = hiddenInputStyle;
   };
 
   private onInputBlur = (): void => {
@@ -354,33 +352,37 @@ export class CalciteRadioButton {
   }
 
   render(): VNode {
+    const value = this.value?.toString();
+
     return (
-      <Host labeled={!!this.el.textContent}>
-        <input
-          aria-label={this.value || this.guid}
-          checked={this.checked}
-          disabled={this.disabled}
-          hidden={this.hidden}
-          id={`${this.guid}-input`}
-          name={this.name}
-          onBlur={this.onInputBlur}
-          onFocus={this.onInputFocus}
-          ref={this.setInputEl}
-          required={this.required}
-          type="radio"
-          value={this.value}
-        />
-        <calcite-radio
-          checked={this.checked}
-          disabled={this.disabled}
-          focused={this.focused}
-          hidden={this.hidden}
-          hovered={this.hovered}
-          ref={(el) => (this.radio = el)}
-          scale={this.scale}
-          theme={this.theme}
-        />
-        {this.renderLabel()}
+      <Host>
+        <div class={{ container: true, "container--labeled": !!this.el.textContent }}>
+          <input
+            aria-label={value || this.guid}
+            checked={this.checked}
+            disabled={this.disabled}
+            hidden={this.hidden}
+            id={`${this.guid}-input`}
+            name={this.name}
+            onBlur={this.onInputBlur}
+            onFocus={this.onInputFocus}
+            ref={this.setInputEl}
+            required={this.required}
+            type="radio"
+            value={value}
+          />
+          <calcite-radio
+            checked={this.checked}
+            disabled={this.disabled}
+            focused={this.focused}
+            hidden={this.hidden}
+            hovered={this.hovered}
+            ref={(el) => (this.radio = el)}
+            scale={this.scale}
+            theme={this.theme}
+          />
+          {this.renderLabel()}
+        </div>
       </Host>
     );
   }

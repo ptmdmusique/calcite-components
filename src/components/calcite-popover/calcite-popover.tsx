@@ -17,15 +17,16 @@ import {
   defaultOffsetDistance,
   createPopper,
   updatePopper,
-  CSS as PopperCSS
+  CSS as PopperCSS,
+  OverlayPositioning
 } from "../../utils/popper";
 import { StrictModifiers, Placement, Instance as Popper } from "@popperjs/core";
 import { guid } from "../../utils/guid";
 import { Theme } from "../interfaces";
 import { getElementDir } from "../../utils/dom";
 import { CSS_UTILITY } from "../../utils/resources";
-
-export type FocusId = "close-button";
+import { PopoverFocusId } from "./resources";
+import { getElementById, getRootNode } from "../../utils/dom";
 
 /**
  * @slot image - A slot for adding an image. The image will appear above the other slot content.
@@ -101,6 +102,9 @@ export class CalcitePopover {
       this.calcitePopoverClose.emit();
     }
   }
+
+  /** Describes the type of positioning to use for the overlaid content. If your element is in a fixed container, use the 'fixed' value. */
+  @Prop() overlayPositioning: OverlayPositioning = "absolute";
 
   /**
    * Determines where the component will be positioned relative to the referenceElement.
@@ -198,7 +202,7 @@ export class CalcitePopover {
   }
 
   @Method()
-  async setFocus(focusId?: FocusId): Promise<void> {
+  async setFocus(focusId?: PopoverFocusId): Promise<void> {
     if (focusId === "close-button") {
       this.closeButtonEl?.focus();
       return;
@@ -259,24 +263,19 @@ export class CalcitePopover {
   };
 
   getReferenceElement(): HTMLElement {
-    const { referenceElement } = this;
+    const { referenceElement, el } = this;
+    const rootNode = getRootNode(el);
 
     return (
       (typeof referenceElement === "string"
-        ? document.getElementById(referenceElement)
+        ? getElementById(rootNode, referenceElement)
         : referenceElement) || null
     );
   }
 
   getModifiers(): Partial<StrictModifiers>[] {
-    const {
-      arrowEl,
-      flipPlacements,
-      disableFlip,
-      disablePointer,
-      offsetDistance,
-      offsetSkidding
-    } = this;
+    const { arrowEl, flipPlacements, disableFlip, disablePointer, offsetDistance, offsetSkidding } =
+      this;
     const flipModifier: Partial<StrictModifiers> = {
       name: "flip",
       enabled: !disableFlip
@@ -312,12 +311,13 @@ export class CalcitePopover {
 
   createPopper(): void {
     this.destroyPopper();
-    const { el, placement, _referenceElement: referenceEl } = this;
+    const { el, placement, _referenceElement: referenceEl, overlayPositioning } = this;
     const modifiers = this.getModifiers();
 
     this.popper = createPopper({
       el,
       modifiers,
+      overlayPositioning,
       placement,
       referenceEl
     });
@@ -342,14 +342,6 @@ export class CalcitePopover {
   //  Render Methods
   //
   // --------------------------------------------------------------------------
-
-  renderImage(): VNode {
-    return this.el.querySelector("[slot=image]") ? (
-      <div class={CSS.imageContainer}>
-        <slot name="image" />
-      </div>
-    ) : null;
-  }
 
   renderCloseButton(): VNode {
     const { closeButton, intlClose } = this;
@@ -393,11 +385,10 @@ export class CalcitePopover {
         >
           {arrowNode}
           <div class={CSS.container}>
-            {this.renderImage()}
             <div class={CSS.content}>
               <slot />
-              {this.renderCloseButton()}
             </div>
+            {this.renderCloseButton()}
           </div>
         </div>
       </Host>
