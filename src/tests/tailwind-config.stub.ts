@@ -1,4 +1,3 @@
-// everything from our tailwind config, except `plugins` utilities
 export default {
   theme: {
     borderColor: {
@@ -225,7 +224,7 @@ export default {
       full: "9999px",
       half: "50%"
     },
-    borderWidth: { "0": "0px", "2": "2px", "3": "3px", "4": "4px", "8": "8px", default: "1px" },
+    borderWidth: { "0": "0", "2": "2px", "4": "4px", "8": "8px", default: "1px", px: "1px" },
     boxShadow: {
       "0": "0 4px 8px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04)",
       "1": "0 4px 8px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04)",
@@ -283,7 +282,7 @@ export default {
       "100": "1",
       disabled: "0.5"
     },
-    divideWidth: { "0": "0px", "2": "2px", "3": "3px", "4": "4px", "8": "8px", default: "1px" },
+    divideWidth: { "0": "0", "2": "2px", "4": "4px", "8": "8px", default: "1px", px: "1px" },
     fill: {
       current: "currentColor",
       color: {
@@ -1186,6 +1185,7 @@ export default {
   purge: [],
   target: "relaxed",
   prefix: "",
+  plugins: "[ [Function (anonymous)], [Function (anonymous)] ]",
   important: false,
   separator: ":",
   presets: []
