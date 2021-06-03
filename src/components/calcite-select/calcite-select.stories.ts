@@ -15,32 +15,34 @@ const createSelectAttributes: (options?: { except: string[] }) => Attributes = (
     commit: () => Attribute;
   }
 
-  return ([
-    {
-      name: "dir",
-      commit(): Attribute {
-        this.value = select("dir", dir.values, dir.defaultValue, group);
-        delete this.build;
-        return this;
+  return (
+    [
+      {
+        name: "dir",
+        commit(): Attribute {
+          this.value = select("dir", dir.values, dir.defaultValue, group);
+          delete this.build;
+          return this;
+        }
+      },
+      {
+        name: "disabled",
+        commit(): Attribute {
+          this.value = boolean("disabled", false, group);
+          delete this.build;
+          return this;
+        }
+      },
+      {
+        name: "theme",
+        commit(): Attribute {
+          this.value = select("theme", theme.values, theme.defaultValue, group);
+          delete this.build;
+          return this;
+        }
       }
-    },
-    {
-      name: "disabled",
-      commit(): Attribute {
-        this.value = boolean("disabled", false, group);
-        delete this.build;
-        return this;
-      }
-    },
-    {
-      name: "theme",
-      commit(): Attribute {
-        this.value = select("theme", theme.values, theme.defaultValue, group);
-        delete this.build;
-        return this;
-      }
-    }
-  ] as DeferredAttribute[])
+    ] as DeferredAttribute[]
+  )
     .filter((attr) => !except.find((excluded) => excluded === attr.name))
     .map((attr) => attr.commit());
 };
@@ -105,6 +107,33 @@ export const grouped = (): string =>
   create(
     "calcite-select",
     createSelectAttributes(),
+    html`
+      ${create(
+        "calcite-option-group",
+        createOptionGroupAttributes(),
+        html`
+          ${create("calcite-option", createOptionAttributes())}
+          <calcite-option label="some fixed option (A)" value="some-fixed-value-a"></calcite-option>
+          <calcite-option label="another fixed option (A)" value="another-fixed-value-a"></calcite-option>
+        `
+      )}
+      <calcite-option-group label="group B (fixed)">
+        <calcite-option label="some fixed option (B)" value="some-fixed-value-b"></calcite-option>
+        <calcite-option label="another fixed option (B)" value="another-fixed-value-b"></calcite-option>
+      </calcite-option-group>
+    `
+  );
+
+export const RTL = (): string =>
+  create(
+    "calcite-select",
+    [
+      ...createSelectAttributes({ except: ["dir"] }),
+      {
+        name: "dir",
+        value: "rtl"
+      }
+    ],
     html`
       ${create(
         "calcite-option-group",
